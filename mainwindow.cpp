@@ -12,6 +12,8 @@
 #include <QTimer>
 
 #include <chrono>
+#include <string>
+#include <sstream>
 
 static constexpr std::chrono::seconds kWriteTimeout = std::chrono::seconds{5};
 
@@ -53,7 +55,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_console, &Console::getData, this, &MainWindow::writeData);
     //! [3]
 
-    connect(m_controller, &XBoxController::onControllerLeftJoystickPushed, this, &MainWindow::handleControllerMoved);
+    connect(m_controller, &XBoxController::onControllerConnected, this, &MainWindow::handleControllerConnected);
+    connect(m_controller, &XBoxController::onControllerDisconnected, this, &MainWindow::handleControllerDisconnected);
+    connect(m_controller, &XBoxController::onControllerLeftJoystickPushed, this, &MainWindow::handleControllerLeftJoystickPushed);
 }
 //! [3]
 
@@ -158,6 +162,32 @@ void MainWindow::handleWriteTimeout()
                              "Error: %2").arg(m_serial->portName(),
                                    m_serial->errorString());
     showWriteError(error);
+}
+
+void MainWindow::handleControllerConnected(int controller_number)
+{
+    std::stringstream ss;
+    ss << "controller " << controller_number << " connected\r\n";
+    m_console->putData(ss.str().c_str());
+}
+
+void MainWindow::handleControllerDisconnected(int controller_number)
+{
+    std::stringstream ss;
+    ss << "controller " << controller_number << " disconnected\r\n";
+    m_console->putData(ss.str().c_str());
+}
+
+void MainWindow::handleControllerLeftJoystickPushed(int controller_number, int x_offset, int y_offset)
+{
+    std::stringstream ss;
+    ss << "controller " << controller_number << " LX=" << x_offset << " LY=" << y_offset << "\r\n";
+    m_console->putData(ss.str().c_str());
+
+    // TODO: send the data to the serial port
+    if(m_serial->isOpen()) {
+        // m_serial->write();
+    }
 }
 
 void MainWindow::initActionsConnections()

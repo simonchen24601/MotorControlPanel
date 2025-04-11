@@ -39,7 +39,7 @@ set_target_properties(MotorControlPanel PROPERTIES
     MACOSX_BUNDLE TRUE
 )
 
-target_link_libraries(MotorControlPanel PRIVATE Qt6::Widgets Qt6::SerialPort Qt::Gui Qt::Core)
+target_link_libraries(MotorControlPanel PRIVATE Qt6::Widgets Qt6::SerialPort Qt::Gui Qt::Core Xinput)
 
 # Resources:
 set(resource_files

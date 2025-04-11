@@ -43,7 +43,9 @@ private slots:
     void handleWriteTimeout();
 
     // Controller Event Callback
-    void handleControllerMoved(int controller_number, int x_offset, int y_offset);
+    void handleControllerConnected(int controller_number);
+    void handleControllerDisconnected(int controller_number);
+    void handleControllerLeftJoystickPushed(int controller_number, int x_offset, int y_offset);
 
 private:
     void initActionsConnections();

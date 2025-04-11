@@ -61,14 +61,10 @@ void XBoxController::pollJoystick()
 
         auto lx = controllers_[i].state.Gamepad.sThumbLX;
         auto ly = controllers_[i].state.Gamepad.sThumbLY;
-        if(lx != 0 || ly != 0) {
-            emit onControllerLeftJoystickPushed(i, lx, ly);
-        }
+        emit onControllerLeftJoystickPushed(i, lx, ly);
 
         auto rx = controllers_[i].state.Gamepad.sThumbRX;
         auto ry = controllers_[i].state.Gamepad.sThumbRY;
-        if(rx != 0 || ly != 0) {
-            emit onControllerRightJoystickPushed(i, rx, ry);
-        }
+        emit onControllerRightJoystickPushed(i, rx, ry);
     }
 }
