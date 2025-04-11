@@ -1,11 +1,7 @@
 #ifndef MESSAGEINTERFACE_H
 #define MESSAGEINTERFACE_H
 
-#include <QObject>
-#include <QSerialPort>
-// #include <QBluetooth>
-// QBluetooth: Win32 backend has been removed. There will not be a working Bluetooth backend when Qt is built with mingw
-// QBluetooth:
+#include <string>
 
 enum MessageType {
     MSG_VEHICLE_FORWARD = 'W',
@@ -14,25 +10,17 @@ enum MessageType {
     MSG_VEHICLE_RIGHT = 'D'
 };
 
-class MessageInterfaceBase : QObject
-{
-    Q_OBJECT
-public:
-    MessageInterfaceBase();
-    virtual ~MessageInterfaceBase() {};
+#pragma pack(push, 1)
 
-    virtual int init() = 0;
-    virtual int connect() = 0;
-    virtual int send_msg() { return -1; };
-
-signals:
-    void on_recv_msg();
+struct FeedbackInfo {
+    int rpm;
+    int speed;
 };
 
-// class SerialMessageInterface : public MessageInterfaceBase {
-// public:
-//     int init() override;
-//     int connect() override;
-// };
+#pragma pack(pop)
+
+FeedbackInfo parseFeedbackInfo(const char* payload, size_t length);
+
+std::string packConrolMessage(int x, int y);
 
 #endif // MESSAGEINTERFACE_H

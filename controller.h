@@ -11,9 +11,9 @@
 #error "platform not supported"
 #endif
 
-constexpr int CONTROLLER_PULL_RATE_MS = 500;
+constexpr int CONTROLLER_PULL_RATE_MS = 300;
 constexpr int CONTROLLER_CONNECTED_MAX = 4;
-constexpr int CONTROLLER_INPUT_DEADZONE = 0.24f * FLOAT(0x7FFF);  // Default to 24% of the +/- 32767 range
+constexpr int CONTROLLER_INPUT_DEADZONE = 0.24f * FLOAT(0x7FFF);  // Default to 24% of the +/- INT16 min max range
 /*
  * The XInput API supports up to four controllers connected at any time. The XInput functions all
  * require a dwUserIndex parameter that is passed in to identify the controller being set or queried.

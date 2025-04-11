@@ -36,20 +36,24 @@ void XBoxController::pollJoystick()
         }
 
         // Zero value if thumbsticks are within the dead zone
-        if( ( controllers_[i].state.Gamepad.sThumbLX < CONTROLLER_INPUT_DEADZONE &&
-             controllers_[i].state.Gamepad.sThumbLX > -CONTROLLER_INPUT_DEADZONE ) &&
-            ( controllers_[i].state.Gamepad.sThumbLY < CONTROLLER_INPUT_DEADZONE &&
-             controllers_[i].state.Gamepad.sThumbLY > -CONTROLLER_INPUT_DEADZONE ) )
+        if( controllers_[i].state.Gamepad.sThumbLX < CONTROLLER_INPUT_DEADZONE &&
+             controllers_[i].state.Gamepad.sThumbLX > -CONTROLLER_INPUT_DEADZONE )
         {
             controllers_[i].state.Gamepad.sThumbLX = 0;
+        }
+        if ( controllers_[i].state.Gamepad.sThumbLY < CONTROLLER_INPUT_DEADZONE &&
+             controllers_[i].state.Gamepad.sThumbLY > -CONTROLLER_INPUT_DEADZONE )
+        {
             controllers_[i].state.Gamepad.sThumbLY = 0;
         }
-        if( ( controllers_[i].state.Gamepad.sThumbRX < CONTROLLER_INPUT_DEADZONE &&
-             controllers_[i].state.Gamepad.sThumbRX > -CONTROLLER_INPUT_DEADZONE ) &&
-            ( controllers_[i].state.Gamepad.sThumbRY < CONTROLLER_INPUT_DEADZONE &&
-             controllers_[i].state.Gamepad.sThumbRY > -CONTROLLER_INPUT_DEADZONE ) )
+        if( controllers_[i].state.Gamepad.sThumbRX < CONTROLLER_INPUT_DEADZONE &&
+             controllers_[i].state.Gamepad.sThumbRX > -CONTROLLER_INPUT_DEADZONE )
         {
             controllers_[i].state.Gamepad.sThumbRX = 0;
+        }
+        if( controllers_[i].state.Gamepad.sThumbRY < CONTROLLER_INPUT_DEADZONE &&
+             controllers_[i].state.Gamepad.sThumbRY > -CONTROLLER_INPUT_DEADZONE )
+        {
             controllers_[i].state.Gamepad.sThumbRY = 0;
         }
     }

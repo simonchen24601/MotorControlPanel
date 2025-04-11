@@ -7,6 +7,7 @@
 
 #include <QMainWindow>
 #include <QSerialPort>
+#include <QLineEdit>
 #include "controller.h"
 
 QT_BEGIN_NAMESPACE
@@ -60,6 +61,8 @@ private:
     SettingsDialog *m_settings = nullptr;
     qint64 m_bytesToWrite = 0;
     QTimer *m_timer = nullptr;
+    QLineEdit *m_lineEditRPM = nullptr;
+    QLineEdit *m_lineEditSpeed = nullptr;
     QSerialPort *m_serial = nullptr;
     XBoxController *m_controller = nullptr;
 };

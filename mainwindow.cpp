@@ -6,6 +6,7 @@
 #include "ui_mainwindow.h"
 #include "console.h"
 #include "settingsdialog.h"
+#include "messageinterface.h"
 
 #include <QLabel>
 #include <QMessageBox>
@@ -33,7 +34,14 @@ MainWindow::MainWindow(QWidget *parent) :
     //! [1]
     m_ui->setupUi(this);
     m_console->setEnabled(false);
-    setCentralWidget(m_console);
+
+    m_lineEditRPM = m_ui->lineEditRPM;
+    m_lineEditSpeed = m_ui->lineEditSpeed;
+    m_lineEditRPM->setText("-1");
+    m_lineEditSpeed->setText("-1");
+
+    // setCentralWidget(m_console);
+    m_ui->verticalLayout_main->addWidget(m_console);
 
     m_ui->actionConnect->setEnabled(true);
     m_ui->actionDisconnect->setEnabled(false);
@@ -86,6 +94,10 @@ void MainWindow::openSerialPort()
         showStatusMessage(tr("Connected to %1 : %2, %3, %4, %5, %6")
                               .arg(p.name, p.stringBaudRate, p.stringDataBits,
                                    p.stringParity, p.stringStopBits, p.stringFlowControl));
+        QByteArray data;
+        data.push_back(static_cast<char>(0xff));
+        writeData(data);
+
     } else {
         QMessageBox::critical(this, tr("Error"), m_serial->errorString());
 
@@ -132,8 +144,13 @@ void MainWindow::writeData(const QByteArray &data)
 //! [7]
 void MainWindow::readData()
 {
+    m_console->putData("[serial] ");
     const QByteArray data = m_serial->readAll();
     m_console->putData(data);
+
+    FeedbackInfo feedback = parseFeedbackInfo(data.toStdString().c_str(), data.size());
+    m_lineEditRPM->setText(std::to_string(feedback.rpm).c_str());
+    m_lineEditSpeed->setText(std::to_string(feedback.speed).c_str());
 }
 //! [7]
 
@@ -167,25 +184,29 @@ void MainWindow::handleWriteTimeout()
 void MainWindow::handleControllerConnected(int controller_number)
 {
     std::stringstream ss;
-    ss << "controller " << controller_number << " connected\r\n";
+    ss << "[controller] no." << controller_number << " connected\r\n";
     m_console->putData(ss.str().c_str());
 }
 
 void MainWindow::handleControllerDisconnected(int controller_number)
 {
     std::stringstream ss;
-    ss << "controller " << controller_number << " disconnected\r\n";
+    ss << "[controller] no." << controller_number << " disconnected\r\n";
     m_console->putData(ss.str().c_str());
 }
 
 void MainWindow::handleControllerLeftJoystickPushed(int controller_number, int x_offset, int y_offset)
 {
-    std::stringstream ss;
-    ss << "controller " << controller_number << " LX=" << x_offset << " LY=" << y_offset << "\r\n";
-    m_console->putData(ss.str().c_str());
+    if(x_offset != 0 || y_offset != 0) {
+        std::stringstream ss;
+        ss << "[controller] no." << controller_number << " LX=" << x_offset << " LY=" << y_offset << "\r\n";
+        m_console->putData(ss.str().c_str());
+    }
 
     // TODO: send the data to the serial port
     if(m_serial->isOpen()) {
+        QByteArray data(packConrolMessage(x_offset, y_offset));
+        writeData(data);
         // m_serial->write();
     }
 }
